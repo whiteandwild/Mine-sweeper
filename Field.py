@@ -89,12 +89,14 @@ class Field:
                     look_deeper(cord_x + i , cord_y +j)
 
 
-
+   
         look_deeper(x ,y)
         
         self.fields_left -= len(discovered)
 
 
         return discovered
-            
+
+    def get_bombs(self):
+        return self.bombs   
 
