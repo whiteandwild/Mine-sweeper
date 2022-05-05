@@ -8,12 +8,12 @@ flags = 0
 
 def start(size , b,v_board , obj):
     
-    global board , visible_board , bombs , board_size , game
+    global board , visible_board , bombs , board_size , game,flags
     game = obj
     bombs = b
     board_size = size
     board = Field(board_size)
-
+    flags = 0
     board.roll_bombs(bombs)
     board.Apply_numbers()
 
@@ -39,14 +39,14 @@ def print_nice(l):
     print('-' * board_size*4)
 
 def press(where , type):
-    print(where)
+    
     x = where // board_size
     y = where % board_size
 
     #if visible_board[x][y] != "?": return False
 
-    if type == "L": #left click
-        print(x,y)
+    if type == "left": #left click
+        if game.get_val(where) == "F" : return False
         found = board.discover_board((x,y))
         
         if not found :
@@ -61,31 +61,36 @@ def press(where , type):
             return
             
         show_on_board(found)
-    elif type == "R":
-        Add_flag(x,y)
 
+    elif type == "right":
+        Add_flag(where)
+        
 
+    if Check_win():\
+        print('you won')
 def show_on_board(args):
     for elem in args:
         game.show(elem[0] * board_size + elem[1] ,board.board[elem[0]][elem[1]] if board.board[elem[0]][elem[1]] != 0 else "" )
         
 def Add_flag(cords):
-
-    value = visible_board[cords[0]][cords[1]]
-
+    global flags
+    
+    value = game.get_val(cords)
+    x = "F"
+    print(value)
     match value:
         
-        case "?":
-            visible_board[cords[0]][cords[1]] = "F"
+        case "":
+            
             flags +=1
         case "F":
-            visible_board[cords[0]][cords[1]] = "?"
+            x = ""
             flags -=1
         case _:
             return False
-    
+    game.show_flag(cords , x)
 def Check_win():
-    
+    print(flags , bombs , board.fields_left)
     if flags != bombs : return False
 
     if board.fields_left == bombs : return True

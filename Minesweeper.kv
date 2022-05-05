@@ -41,6 +41,34 @@ WindowManager:
         on_text:
             if len(self.text) > 3: self.text = self.text[:3]
 
+[Select@Button]:
+    canvas.before:
+        Color:
+            rgba: .5, .5, .5, 1
+        Line:
+            width: 2
+            rectangle: self.x, self.y, self.width, self.height
+    text: ctx.text
+    font_size : max(self.width/5, self.height/10)
+    background_color : [1,1,1,1] if not ctx.dis else [1,0,0,0.75]
+    background_normal: ''
+    ripple_scale: 0
+    background_disabled_normal : ''
+    background_disabled_down : ''
+    color : [0,0,0,1]
+    disabled : ctx.dis
+    
+
+    on_press:
+        app.root.children[0].DisableOthers(self.parent , self.text)
+        self.disabled = True
+        self.background_color  = [1,0,0,0.75]
+        
+        #root.DisableOthers()
+       
+        
+    
+    
 
    
 
@@ -68,11 +96,53 @@ WindowManager:
                 id : size
                 defaultvalue : "10"
         
-            Options:
-                text: "Ilosc bomb"
-                bgcolor : 250/255, 200/255, 17/255, 1
-                id : bombs
-                defaultvalue : "10"
+            # Options:
+            #     text: "Ilosc bomb"
+            #     bgcolor : 250/255, 200/255, 17/255, 1
+            #     id : bombs
+            #     defaultvalue : "10"
+            BoxLayout:
+                id: difficulty
+                orientation:"horizontal"
+                size_hint_y : 1
+                size_hint_x : 1
+
+                Label:
+                    font_size : max(self.width/10, self.height/10)
+                    size_hint_y : 1
+                    size_hint_x : 1
+                    canvas.before:
+                        Color:
+                            rgba: 250/255, 200/255, 17/255, 1
+                        Rectangle:
+                            pos: self.pos
+                            size: self.size
+                    color: 1, 1, 1, 1
+                    text: "Poziom trudnosci"
+                
+                
+                AnchorLayout:
+                    
+                    anchor_x:'center'
+                    anchor_y:'center'
+                
+                    GridLayout:
+                        size_hint_y : 0.75
+                        rows : 1
+                        columns : 3
+                        spacing : 20
+                        padding : [20 ,0 ,0 ,0]
+                        Select:
+                            text:"Łatwy"
+                            dis : True
+                        Select:
+                            text:"Średni"
+                            dis : False
+                        Select:
+                            text:"Trudny"
+                            dis : False
+
+
     
         AnchorLayout:
             id: return
@@ -92,10 +162,10 @@ WindowManager:
                     self.background_color = (252/255, 225/255, 5/255, 1)
                     
                     size = self.parent.parent.children[1].children[1].children[0].text or 10
-                    bombs = self.parent.parent.children[1].children[0].children[0].text or 10
+                   
                     app.root.current = "game"
                     
-                    app.root.children[0].createBoard(size , bombs)
+                    app.root.children[0].createBoard(size)
                     
                     
                 on_press: 
@@ -141,8 +211,7 @@ WindowManager:
                     pos: self.pos
                     size: self.size
                     
-
-
+   
                 
                 
         
